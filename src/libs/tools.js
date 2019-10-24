@@ -213,3 +213,12 @@ export const objEqual = (obj1, obj2) => {
   /* eslint-disable-next-line */
   else return !keysArr1.some(key => obj1[key] != obj2[key])
 }
+
+export const hasValue = val => {
+  return val !== null && val !== undefined && val !== ''
+}
+
+export const deepCopy = data => {
+  let obj = JSON.parse(JSON.stringify(data))
+  return obj
+}

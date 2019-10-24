@@ -22,12 +22,12 @@ export default {
     return {
       langList: {
         'zh-CN': '语言',
-        'zh-TW': '語言',
+        // 'zh-TW': '語言',
         'en-US': 'Lang'
       },
       localList: {
         'zh-CN': '中文简体',
-        'zh-TW': '中文繁体',
+        // 'zh-TW': '中文繁体',
         'en-US': 'English'
       }
     }

@@ -7,22 +7,24 @@ import customEnUs from './lang/en-US'
 import zhCnLocale from 'iview/src/locale/lang/zh-CN'
 import enUsLocale from 'iview/src/locale/lang/en-US'
 import zhTwLocale from 'iview/src/locale/lang/zh-TW'
+import customProjectZhCn from './lang/custom/zh-CN'
+import customProjectEnUs from './lang/custom/en-US'
 
 Vue.use(VueI18n)
 
 // 自动根据浏览器系统语言设置语言
 const navLang = navigator.language
 const localLang = (navLang === 'zh-CN' || navLang === 'en-US') ? navLang : false
-let lang = localLang || localRead('local') || 'zh-CN'
+let lang = localLang || localRead('local') || 'en-US'
 
 Vue.config.lang = lang
 
 // vue-i18n 6.x+写法
 Vue.locale = () => {}
 const messages = {
-  'zh-CN': Object.assign(zhCnLocale, customZhCn),
+  'zh-CN': Object.assign(zhCnLocale, customZhCn, customProjectZhCn),
   'zh-TW': Object.assign(zhTwLocale, customZhTw),
-  'en-US': Object.assign(enUsLocale, customEnUs)
+  'en-US': Object.assign(enUsLocale, customEnUs, customProjectEnUs)
 }
 const i18n = new VueI18n({
   locale: lang,

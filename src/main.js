@@ -15,6 +15,7 @@ import '@/assets/icons/iconfont.css'
 import TreeTable from 'tree-table-vue'
 import VOrgTree from 'v-org-tree'
 import 'v-org-tree/dist/v-org-tree.css'
+import ImageViewer from 'vue2-viewer'
 // 实际打包时应该不引入mock
 /* eslint-disable */
 if (process.env.NODE_ENV !== 'production') require('@/mock')
@@ -24,6 +25,7 @@ Vue.use(iView, {
 })
 Vue.use(TreeTable)
 Vue.use(VOrgTree)
+Vue.use(ImageViewer);
 /**
  * @description 注册admin内置插件
  */
@@ -41,6 +43,14 @@ Vue.prototype.$config = config
  */
 importDirective(Vue)
 Vue.directive('clickOutside', clickOutside)
+
+/**
+ * 全局分页数量
+ */
+Vue.prototype.$pageSize = 50
+
+// Vue.prototype.$baseUrl = 'http://yihai.svw-aar.com/api/v1/'
+// Vue.prototype.$baseUrl = 'http://localhost:9600/api/v1/'
 
 /* eslint-disable no-new */
 new Vue({

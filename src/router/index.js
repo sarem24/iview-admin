@@ -8,10 +8,12 @@ import config from '@/config'
 const { homeName } = config
 
 Vue.use(Router)
+console.info(routes)
 const router = new Router({
   routes,
   mode: 'history'
 })
+console.info(router)
 const LOGIN_PAGE_NAME = 'login'
 
 const turnTo = (to, access, next) => {
