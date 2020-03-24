@@ -95,6 +95,14 @@ export default [
           title: '消息中心'
         },
         component: () => import('@/view/single-page/message/index.vue')
+      }, {
+        path: 'change_password',
+        name: 'change_password',
+        meta: {
+          icon: 'md-notifications',
+          title: '更改密码'
+        },
+        component: () => import('@/view/single-page/password/index.vue')
       }
     ]
   },
@@ -107,19 +115,20 @@ export default [
       title: '业务管理'
     },
     children: [{
-      path: '/project',
-      name: 'project',
+      path: '/execute_project',
+      name: 'execute_project',
       meta: {
         icon: 'logo-buffer',
-        title: '项目'
+        title: '执行项目'
       },
-      component: () => import('@/view/components/business/project.vue')
+      component: () => import('@/view/components/business/project-execute.vue')
     }, {
-      path: '/invoice',
-      name: 'invoice',
+      path: '/project',
+      name: 'pending_project',
       meta: {
+        access: ['boss', 'seller'],
         icon: 'logo-buffer',
-        title: '订单'
+        title: '待审项目'
       },
       component: () => import('@/view/components/business/project.vue')
     }]
@@ -133,6 +142,15 @@ export default [
       title: '配置信息'
     },
     children: [{
+      path: '/vendor_management',
+      name: 'vendor_management',
+      meta: {
+        // access: ['boss', 'cashier'],
+        icon: 'logo-buffer',
+        title: '供应商管理'
+      },
+      component: () => import('@/view/components/configuration/vendor/index.vue')
+    }, {
       path: '/customer_management',
       name: 'customer_management',
       meta: {
@@ -144,6 +162,7 @@ export default [
       path: '/employee_management',
       name: 'employee_management',
       meta: {
+        access: ['boss', 'cashier'],
         icon: 'logo-buffer',
         title: '员工信息管理'
       },

@@ -82,8 +82,10 @@ export default {
           password
         }).then(res => {
           const data = res.data
-          commit('setToken', data.token)
-          resolve()
+          if (data.success) {
+            commit('setToken', data.result)
+          }
+          resolve(res)
         }).catch(err => {
           reject(err)
         })
@@ -110,11 +112,11 @@ export default {
       return new Promise((resolve, reject) => {
         try {
           getUserInfo(state.token).then(res => {
-            const data = res.data
-            commit('setAvator', data.avator)
+            const data = res.data.result
+            commit('setAvator', 'https://file.iviewui.com/dist/a0e88e83800f138b94d2414621bd9704.png')
             commit('setUserName', data.name)
-            commit('setUserId', data.user_id)
-            commit('setAccess', data.access)
+            commit('setUserId', data.id)
+            commit('setAccess', data.role)
             commit('setHasGetInfo', true)
             resolve(data)
           }).catch(err => {

@@ -3,12 +3,12 @@
     <projectSearch
       :search-item="searchItem"
       :customer-list="customerList"
+      :employee-list="employeeList"
       :is-search="isSearch"
       :type="type"
       @search="handleProjectFilter"
       @refresh="handleRefreshInfo">
     </projectSearch>
-    <Button size="large" shape="circle" icon="md-add" @click="handleShowProjectInsert">{{$t('insert')}}</Button>
     <projectStateDes/>
     <project-list
       ref="projectList"
@@ -18,8 +18,8 @@
       :totalProject="totalProject"
       :dataProject="dataProject"
       :type="type"
-      @handleUpdateSearchButton="handleUpdateSearchButton"
       @handleGetDataPage="handleGetDataPage"
+      @handleLoadEmployee="handleLoadEmployee"
       @handleLoadingProject="handleLoadingProject">
     </project-list>
   </div>
@@ -27,13 +27,14 @@
 
 <script>
 import {
-  getDataPage,
-  getData
+  getData,
+  getDataPage
+
 } from '@/api/data'
 import {
   hasOneOf
 } from '@/libs/tools'
-import 'viewerjs/dist/viewer.css'
+
 import projectSearch from './project-search.vue'
 import projectStateDes from './project-state-description.vue'
 import projectList from './project-list.vue'
@@ -44,43 +45,29 @@ export default {
     projectStateDes,
     projectList
   },
-  name: 'project',
+  name: 'project-execute',
   data () {
     return {
-      moduleName: 'project',
-      type: 'project',
-
+      type: 'execute',
+      moduleName: 'execute_project',
       totalProject: 0,
       dataProject: [],
-
-      totalPrice: 0,
-      customerList: [],
-      isShowForm: false,
-      isShowConfig: false,
-      isShowPortion: false,
-      isShowDetail: false,
-      isShowPdf: false,
-      isShowProjectUpload: false,
-      isShowProjectDetailUpload: false,
-      isShowProjectRemarkForm: false,
       isSearch: false,
-
       loadingProject: true,
-      projectTax: 0,
-      // projectTotalExcludingTax: 0,
-      // projectTotalIncludingTax: 0,
-      // projectFit: 0,
-
       searchItem: {
         name: '',
+        status: '',
         cycle: [],
         startTime: '',
         customerId: '',
+        employeeId: '',
         saleInvoice: '',
         invoice: '',
         collection: '',
         payment: ''
-      }
+      },
+      customerList: [],
+      employeeList: [],
     }
   },
   computed: {
@@ -101,22 +88,17 @@ export default {
     handleLoadingProject (value) {
       this.loadingProject = value
     },
-    handleShowProjectInsert () {
-      this.$refs.projectList.handleShowProjectInsert()
+    handleLoadEmployee (value) {
+      console.info(value)
+      this.employeeList = value
     },
     handleProjectFilter () {
       this.loadingProject = true
       this.isSearch = true
       this.$refs.projectList.selectProjectByRecords(this.searchItem)
     },
-    handleUpdateSearchButton (value) {
-      this.isSearch = value
-    },
     handleRefreshInfo () {
       this.getCustomer()
-    },
-    handleShowForm (params) {
-      this.isShowConfig = true
     },
     handleGetDataPage (obj) {
       getDataPage(this.moduleName, obj).then(res => {
@@ -134,11 +116,10 @@ export default {
   },
   created () {
     this.handleRefreshInfo()
-    // this.$refs.projectList.selectProject(null)
-    // this.$refs.projectList.selectProject()
   }
 }
 </script>
+
 <style scoped>
 
 </style>

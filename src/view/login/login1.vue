@@ -11,12 +11,12 @@
       </div>
       <div class="ivu-login">
         <login-form @on-success-valid="handleSubmit"></login-form>
-        <p class="login-tip">输入任意用户名和密码即可</p>
+        <!--<p class="login-tip">输入任意用户名和密码即可</p>-->
       </div>
 
     </div>
     <footer class="ivu-global-footer i-copyright">
-      <div class="ivu-global-footer-copyright">Copyright © 2019 上海益海信息技术有限公司</div>
+      <div class="ivu-global-footer-copyright">Copyright © 2019-2020 上海益海信息技术有限公司</div>
     </footer>
   </div>
 </template>
@@ -36,11 +36,15 @@ export default {
     ]),
     handleSubmit ({ userName, password }) {
       this.handleLogin({ userName, password }).then(res => {
-        this.getUserInfo().then(res => {
-          this.$router.push({
-            name: this.$config.homeName
+        if (res.data.success) {
+          this.getUserInfo().then(res => {
+            this.$router.push({
+              name: this.$config.homeName
+            })
           })
-        })
+        } else {
+          this.$Message.error(res.data.result)
+        }
       })
     }
   }

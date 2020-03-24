@@ -1,5 +1,4 @@
 <template>
-  <!--<Input v-model="value" placeholder="Enter something..." style="width: 300px" />-->
   <div>
     <Form ref="formInline" :model="formInline" inline :label-width="70">
       <FormItem :label="$t('name')">
@@ -40,8 +39,8 @@
         <FormItem :label="$t('name')" prop="name">
           <Input v-model="formItem.name"/>
         </FormItem>
-        <FormItem :label="$t('gender')">
-          <Select v-model="formItem.gender" prop="gender">
+        <FormItem :label="$t('gender')" prop="gender">
+          <Select v-model="formItem.gender" >
             <Option value="1">{{$t('man')}}</Option>
             <Option value="0">{{$t('woman')}}</Option>
           </Select>
@@ -52,25 +51,36 @@
         <FormItem :label="$t('mobile')" prop="mobile">
           <Input v-model="formItem.mobile"/>
         </FormItem>
+        <FormItem :label="$t('role')" prop="role">
+          <Select v-model="formItem.role" >
+            <Option v-for="item in roles" :value="item" :key="item">{{$t(item)}}</Option>
+          </Select>
+        </FormItem>
         <FormItem :label="$t('email')" prop="email">
           <Input v-model="formItem.email"/>
         </FormItem>
         <FormItem :label="$t('birthday')" prop="birthday">
           <Col span="24">
-          <DatePicker :editable="false" type="date" v-model="formItem.birthday"></DatePicker>
+          <DatePicker :editable="false" type="date" v-model="formItem.birthday" :clearable="false"></DatePicker>
           </Col>
         </FormItem>
-        <FormItem :label="$t('active')">
-          <i-switch v-model="formItem.active" size="large">
-            <span slot="open">生效</span>
-            <span slot="close">失效</span>
-          </i-switch>
-        </FormItem>
+        <!--<FormItem :label="$t('active')">-->
+          <!--<i-switch v-model="formItem.active" size="large">-->
+            <!--<span slot="open">生效</span>-->
+            <!--<span slot="close">失效</span>-->
+          <!--</i-switch>-->
+        <!--</FormItem>-->
         <FormItem>
           <Button type="primary" @click="handleSubmit('formItem')">{{$t('submit')}}</Button>
         </FormItem>
       </Form>
     </Modal>
+    <!--<Modal-->
+      <!--v-model="isDel"-->
+      <!--:title="$t('delete')"-->
+      <!--@on-ok="handleDeleteFile">-->
+      <!--<p>{{$t('areYouSureWantToDeleteIt')}}</p>-->
+    <!--</Modal>-->
   </div>
 </template>
 
@@ -78,11 +88,14 @@
 import {
   insert,
   getDataPage,
-  update
+  getEnumData,
+  update,
+  del
 } from '@/api/data'
 import {
   deepCopy,
-  hasValue
+  hasValue,
+  hasOneOf
 } from '@/libs/tools'
 import moment from 'moment'
 export default {
@@ -115,12 +128,20 @@ export default {
           required: true,
           message: this.$t('input_fill.birthday')
         }],
-        email: [],
+        role: [{
+          required: true,
+          message: this.$t('input_fill.role')
+        }],
+        email: [{
+          type: 'email',
+          message: this.$t('input_fill.emailFormatIsIncorrect')
+        }],
         telephone: []
       },
       modal: {
         title: ''
       },
+      roles: [],
       formInline: {
         name: '',
         mobile: ''
@@ -132,7 +153,8 @@ export default {
         telephone: '',
         mobile: '',
         email: '',
-        birthday: '',
+        birthday: moment().subtract(20, 'y').format('YYYY-MM-DD'),
+        role: '',
         active: true
       },
       isShowForm: false,
@@ -150,11 +172,13 @@ export default {
         },
         {
           title: this.$t('name'),
+          width: 120,
           key: 'name'
         },
         {
           title: this.$t('gender'),
           key: 'gender',
+          width: '80px',
           render: (h, params) => {
             let content = params.row.gender ? '男' : '女'
             return h('div', [
@@ -177,6 +201,7 @@ export default {
         {
           title: this.$t('birthday'),
           key: 'birthday',
+          width: 120,
           render: (h, params) => {
             let content = moment(params.row.birthday).format('YYYY-MM-DD')
             return h('div', [
@@ -185,9 +210,18 @@ export default {
           }
         },
         {
-          title: this.$t('active'),
-          key: 'active'
+          title: this.$t('role'),
+          key: 'role',
+          width: 100,
+          render: (h, params) => {
+            let param = params.row
+            return h('div', this.$t(param.role))
+          }
         },
+        // {
+        //   title: this.$t('active'),
+        //   key: 'active'
+        // },
         {
           title: this.$t('action'),
           key: 'action',
@@ -216,7 +250,14 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.remove(params.index)
+                    this.$Modal.confirm({
+                      title: this.$t('delete'),
+                      content: this.$t('areYouSureWantToDeleteIt'),
+                      loading: true,
+                      onOk: () => {
+                        this.handleDel(params)
+                      }
+                    })
                   }
                 }
               }, this.$t('delete'))
@@ -225,6 +266,20 @@ export default {
         }
       ],
       data: []
+    }
+  },
+  computed: {
+    access () {
+      return this.$store.state.user.access
+    },
+    viewBoss () {
+      return hasOneOf(['boss'], this.access)
+    },
+    viewSeller () {
+      return hasOneOf(['seller'], this.access)
+    },
+    viewCashier () {
+      return hasOneOf(['cashier'], this.access)
     }
   },
   methods: {
@@ -280,6 +335,19 @@ export default {
         this.formItem = formDate
       }
     },
+    handleDel (params) {
+      this.formItem.id = params.row.id
+      del(this.moduleName, this.formItem).then(res => {
+        if (res.data.success) {
+          this.$Message.success(this.$t('success'))
+          this.selectEmployee()
+          this.$Modal.remove()
+        } else {
+          this.$Message.error(res.data.message)
+          this.$Modal.remove()
+        }
+      })
+    },
     selectEmployee () {
       let obj = {}
       obj.page = this.page
@@ -290,10 +358,17 @@ export default {
         this.data = res.data.result.data
         this.loading = false
       })
+    },
+    selectEmployeeRole () {
+      getEnumData('selectEmployeeRole', '').then(res => {
+        this.roles = res.data.result.enumValue.split(',')
+        this.roles.shift()
+      })
     }
   },
   mounted () {
     this.selectEmployee()
+    this.selectEmployeeRole()
   }
 }
 </script>

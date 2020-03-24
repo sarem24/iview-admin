@@ -13,8 +13,9 @@
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
           <user :message-unread-count="unreadCount" :user-avator="userAvator"/>
+          <div class="user-info">{{sayHello}}&nbsp;{{userName}}</div>
           <language v-if="$config.useI18n" @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>
-          <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store>
+<!--          <error-store v-if="$config.plugin['error-store'] && $config.plugin['error-store'].showInHeader" :has-read="hasReadErrorPage" :count="errorCount"></error-store>-->
           <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
         </header-bar>
       </Header>
@@ -27,7 +28,8 @@
             <keep-alive :include="cacheList">
               <router-view/>
             </keep-alive>
-            <ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper"></ABackTop>
+            <!--拉倒底部会自动显示返回顶部箭头，去除2019-10-24-->
+            <!--<ABackTop :height="100" :bottom="80" :right="50" container=".content-wrapper"></ABackTop>-->
           </Content>
         </Layout>
       </Content>
@@ -73,6 +75,31 @@ export default {
     ...mapGetters([
       'errorCount'
     ]),
+    sayHello () {
+      let hour = new Date().getHours()
+      let result = ''
+      if (hour < 6) {
+        result = '凌晨好'
+      } else if (hour < 9) {
+        result = '早上好'
+      } else if (hour < 12) {
+        result = '上午好'
+      } else if (hour < 14) {
+        result = '中午好'
+      } else if (hour < 17) {
+        result = '下午好'
+      } else if (hour < 19) {
+        result = '傍晚好'
+      } else if (hour < 22) {
+        result = '晚上好'
+      } else {
+        result = '夜里好'
+      }
+      return result
+    },
+    userName () {
+      return this.$store.state.user.userName
+    },
     tagNavList () {
       return this.$store.state.app.tagNavList
     },
@@ -185,3 +212,13 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .user-info {
+    margin-right: 5px;
+    background: #EEE url(data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAHklEQVQImWNkYGBgYGD4//8/A5wF5SBYyAr+//8PAPOCFO0Q2zq7AAAAAElFTkSuQmCC) repeat;
+    text-shadow: 3px -3px black, 1px -1px white;
+    font-weight: 900;
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text
+  }
+</style>

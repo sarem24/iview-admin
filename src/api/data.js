@@ -67,6 +67,26 @@ export const update = (module, info) => {
   })
 }
 
+export const updateDate = (module, info, data) => {
+  let url = module + '/update'
+  if (hasValue(info)) {
+    url += '/' + info
+  }
+  return axios.request({
+    url: url,
+    data: data,
+    method: 'put'
+  })
+}
+
+export const del = (module, info) => {
+  return axios.request({
+    url: module + '/delete',
+    data: info,
+    method: 'delete'
+  })
+}
+
 export const updateUrl = (module, info, url) => {
   return axios.request({
     url: module + url,
@@ -92,10 +112,20 @@ export const getData = (module, info) => {
   })
 }
 
+export const getEnumData = (module, info) => {
+  return axios.request({
+    url: 'enum' + '/' + module,
+    params: info,
+    method: 'get'
+  })
+}
+
 export const getDataRestful = (module, info) => {
   let url = module + '/select'
   if (hasValue(info)) {
-    url += '/' + info
+    info.split(',').forEach(item => {
+      url += '/' + item
+    })
   }
   return axios.request({
     url: url,
