@@ -289,8 +289,8 @@ export default {
       this.initFormItem()
       this.$refs['formItem'].resetFields()
       this.innerShowForm = false
-      this.tags = [],
-      this.personData = [],
+      this.tags = []
+      this.personData = []
       this.addressData = []
     },
     clearTagForm () {

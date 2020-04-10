@@ -67,7 +67,7 @@ export default {
         payment: ''
       },
       customerList: [],
-      employeeList: [],
+      employeeList: []
     }
   },
   computed: {

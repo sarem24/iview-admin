@@ -36,12 +36,9 @@
 
 <script>
 import {
-  insert,
   getDataPage,
-  update,
   del
 } from '@/api/data'
-import _ from 'lodash'
 import {
   hasValue,
   hasOneOf
@@ -100,16 +97,16 @@ export default {
           minWidth: 200,
           align: 'left',
           render: (h, params) => {
-            let content;
+            let content
             let row = params.row
             if (hasValue(row.tag)) {
               let arrays = []
               row.tag.split(',').forEach((item, i) => {
-                arrays.push(h('Tag',item))
+                arrays.push(h('Tag', item))
               })
-              content = h('div',arrays)
+              content = h('div', arrays)
             } else {
-              content = h('div','')
+              content = h('div', '')
             }
             return content
           }

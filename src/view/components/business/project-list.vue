@@ -233,7 +233,7 @@
         </Row>
         <Row>
           <FormItem>
-            <Button type="primary" @click="handleSave('formProject')">{{$t('save')}}</Button>
+            <Button type="primary" :disabled="repeatButton" @click="handleSave('formProject')">{{$t('save')}}</Button>
           </FormItem>
         </Row>
       </Form>
@@ -418,6 +418,7 @@ export default {
       moduleType: false,
       remarkByProject: 'project',
       remarkByDetail: 'detail',
+      repeatButton: false,
       newGif,
       hotGif,
       page: 1,
@@ -1516,6 +1517,7 @@ export default {
       this.formItem.cycle = []
     },
     handleSave (form) {
+      this.repeatButton = true
       this.formItem.status = 'update'
       this.executeFormProject(form)
     },
@@ -1525,16 +1527,16 @@ export default {
     },
     handleWithdraw (form) {
       this.formItem.status = 'withdraw'
-      this.executeFormProject(form)
+      this.ruleInline = this.tempRuleInline
+      setTimeout(() => {
+        this.executeFormProject(form)
+      })
     },
     handlePass (form) {
-      let tempRuleInline = _.cloneDeep(this.ruleInline)
-      delete this.ruleInline.withdraw
       this.formItem.status = 'pass'
       this.executeFormProject(form)
-      this.ruleInline = tempRuleInline
     },
-    executeFormProject (form) {
+    executeFormProject (form, rule) {
       this.$refs[form].validate((valid) => {
         if (valid) {
           let url = this.moduleName
@@ -1548,8 +1550,12 @@ export default {
                 this.$refs[form].resetFields()
                 this.isShowForm = false
                 this.selectProject()
+                if (hasValue(this.tempRuleInline)) {
+                  this.ruleInline = this.tempRuleInline
+                }
+                this.repeatButton = false
               } else {
-                this.$Message.error(res.data.message)
+                this.$Message.error(res.data.result.message)
               }
             })
           } else {
@@ -1559,8 +1565,10 @@ export default {
                 this.$refs[form].resetFields()
                 this.isShowConfig = false
                 this.selectProject()
+                this.ruleInline = this.tempRuleInline
+                this.repeatButton = false
               } else {
-                this.$Message.error(res.data.message)
+                this.$Message.error(res.data.result.message)
               }
             })
           }
@@ -1801,6 +1809,8 @@ export default {
     //   this.formDetail.number2 = this.formDetail.number
     // },
     handleShowConfig (index) {
+      this.tempRuleInline = _.cloneDeep(this.ruleInline)
+      delete this.ruleInline.withdraw
       let formDate = _.cloneDeep(this.dataProject[index])
       this.formItem = formDate
       this.formItem.cycle = []
