@@ -40,12 +40,12 @@ import projectStateDes from './project-state-description.vue'
 import projectList from './project-list.vue'
 
 export default {
+  name: 'execute_project',
   components: {
     projectSearch,
     projectStateDes,
     projectList
   },
-  name: 'project-execute',
   data () {
     return {
       type: 'execute',
@@ -89,7 +89,6 @@ export default {
       this.loadingProject = value
     },
     handleLoadEmployee (value) {
-      console.info(value)
       this.employeeList = value
     },
     handleProjectFilter () {

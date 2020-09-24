@@ -146,6 +146,7 @@ export default {
   invoiceOut: '销售发票',
   moneyOut: '采购款',
   moneyIn: '销售款',
+  prepayment: '预付款',
   statusDescription: '状态说明',
   score: '评分',
   tag: '标签',
@@ -157,5 +158,6 @@ export default {
   cashier: '商务',
   change_password: '更改密码',
   promptRecord: '提示记录',
+  NetProfitMarginOnSales: '销售净利润率',
   end: '结束'
 }

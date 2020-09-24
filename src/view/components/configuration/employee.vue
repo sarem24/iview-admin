@@ -99,6 +99,7 @@ import {
 } from '@/libs/tools'
 import moment from 'moment'
 export default {
+  name: 'employee_management',
   data () {
     return {
       moduleName: 'employee',

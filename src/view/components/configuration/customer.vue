@@ -70,6 +70,7 @@ import {
 } from '@/libs/tools'
 import moment from 'moment'
 export default {
+  name: 'customer_management',
   data () {
     return {
       moduleName: 'customer',

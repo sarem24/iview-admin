@@ -119,6 +119,7 @@ export default [
       name: 'execute_project',
       meta: {
         icon: 'logo-buffer',
+        notCache: true,
         title: '执行项目'
       },
       component: () => import('@/view/components/business/project-execute.vue')
@@ -128,6 +129,7 @@ export default [
       meta: {
         access: ['boss', 'seller'],
         icon: 'logo-buffer',
+        notCache: true,
         title: '待审项目'
       },
       component: () => import('@/view/components/business/project.vue')
@@ -147,6 +149,7 @@ export default [
       meta: {
         // access: ['boss', 'cashier'],
         icon: 'logo-buffer',
+        notCache: true,
         title: '供应商管理'
       },
       component: () => import('@/view/components/configuration/vendor/index.vue')
@@ -155,6 +158,7 @@ export default [
       name: 'customer_management',
       meta: {
         icon: 'logo-buffer',
+        notCache: true,
         title: '客户信息管理'
       },
       component: () => import('@/view/components/configuration/customer.vue')
@@ -164,6 +168,7 @@ export default [
       meta: {
         access: ['boss', 'cashier'],
         icon: 'logo-buffer',
+        notCache: true,
         title: '员工信息管理'
       },
       component: () => import('@/view/components/configuration/employee.vue')

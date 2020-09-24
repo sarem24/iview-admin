@@ -45,7 +45,7 @@ import {
 } from '@/libs/tools'
 import information from './information.vue'
 export default {
-  name: 'vendor',
+  name: 'vendor_management',
   components: {
     information
   },

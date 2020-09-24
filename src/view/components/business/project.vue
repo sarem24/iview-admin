@@ -39,12 +39,12 @@ import projectStateDes from './project-state-description.vue'
 import projectList from './project-list.vue'
 
 export default {
+  name: 'pending_project',
   components: {
     projectSearch,
     projectStateDes,
     projectList
   },
-  name: 'project',
   data () {
     return {
       moduleName: 'project',

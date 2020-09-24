@@ -465,6 +465,7 @@ export default {
       filesByCode: [],
       detailInvoiceList: {},
       detailPaymentList: {},
+      detailPrepaymentList: {},
       uploadData: {
         id: ''
       },
@@ -575,14 +576,19 @@ export default {
           key: 'employeeName'
         },
         {
-          title: this.$t('phone'),
-          width: 140,
-          key: 'phone'
+          title: this.$t('projectTotalIncludingTax'),
+          width: 125,
+          align: 'right',
+          key: 'totalPreTaxSubtotal'
         },
         {
-          title: this.$t('address'),
-          minWidth: 170,
-          key: 'address'
+          title: this.$t('NetProfitMarginOnSales'),
+          width: 125,
+          align: 'right',
+          key: 'totalPreTaxProfit',
+          render: (h, params) => {
+            return h('div', params.row.totalPreTaxProfit + '%')
+          }
         },
         {
           title: this.$t('startTime'),
@@ -826,12 +832,13 @@ export default {
         },
         {
           title: this.$t('status'),
-          width: 90,
+          width: 123,
           key: 'status',
           fixed: 'right',
           className: 'table-data-operation-show',
           render: (h, params) => {
             let row = params.row
+            // 以下操作是为创建二维数组的初始化，否则会报错
             if (!hasValue(this.detailInvoiceList[row.portionId])) {
               this.detailInvoiceList[row.portionId] = {}
               if (!hasValue(this.detailInvoiceList[row.portionId][row.id])) {
@@ -856,8 +863,21 @@ export default {
                 this.detailPaymentList[row.portionId][row.id] = row.payment
               }
             }
+            if (!hasValue(this.detailPrepaymentList[row.portionId])) {
+              this.detailPrepaymentList[row.portionId] = {}
+              if (!hasValue(this.detailPrepaymentList[row.portionId][row.id])) {
+                this.detailPrepaymentList[row.portionId][row.id] = {}
+                this.detailPrepaymentList[row.portionId][row.id] = row.prepayment
+              }
+            } else {
+              if (!hasValue(this.detailPrepaymentList[row.portionId][row.id])) {
+                this.detailPrepaymentList[row.portionId][row.id] = {}
+                this.detailPrepaymentList[row.portionId][row.id] = row.prepayment
+              }
+            }
             let invoice = Boolean(row.invoice)
             let payment = Boolean(row.payment)
+            let prepayment = Boolean(row.prepayment)
             if (hasValue(params.row.id)) {
               return h('div', [
                 h('Checkbox', {
@@ -879,7 +899,17 @@ export default {
                       this.handleChangePaymentStatus(value, row)
                     }
                   }
-                }, this.$t('moneyOut'))
+                }, this.$t('moneyOut')),
+                h('Checkbox', {
+                  props: {
+                    value: prepayment
+                  },
+                  on: {
+                    'on-change': (value) => {
+                      this.handleChangePrepaymentStatus(value, row)
+                    }
+                  }
+                }, this.$t('prepayment'))
               ])
             } else {
               return h('div', params.row.status)
@@ -1207,12 +1237,17 @@ export default {
       me.formDetail.number2 = me.formDetail.number
     },
     selectProject () {
-      this.selectProjectByRecords(null)
+      let params = null
+      if (hasValue(this.searchItem)) {
+        params = this.searchItem
+      }
+      this.selectProjectByRecords(params)
     },
     selectProjectByRecords (params) {
       let obj = {}
       if (hasValue(params)) {
         obj = params
+        this.searchItem = params
       }
       obj.page = this.page
       obj.size = this.size
@@ -1505,6 +1540,9 @@ export default {
     handleChangePaymentStatus (value, row) {
       this.detailPaymentList[row.portionId][row.id] = value * 1
     },
+    handleChangePrepaymentStatus (value, row) {
+      this.detailPrepaymentList[row.portionId][row.id] = value * 1
+    },
     handleShowPortionInsert () {
       this.initFormPortion()
       this.isShowPortion = true
@@ -1647,6 +1685,7 @@ export default {
     handleSubmitDetail (form, flag) {
       this.$refs[form].validate((valid) => {
         if (valid) {
+          this.formDetail.projectId = this.formItem.id
           if (!hasValue(this.formDetail.id)) {
             this.formDetail.portionId = this.formPortion.id
             insert(this.moduleDetailName, this.formDetail).then(res => {
@@ -1857,9 +1896,10 @@ export default {
       let data = {
         invoice: this.detailInvoiceList[params.id],
         payment: this.detailPaymentList[params.id],
+        prepayment: this.detailPrepaymentList[params.id],
         projectId: this.formItem.id
       }
-      if (hasValue(this.detailInvoiceList[params.id]) && hasValue(this.detailPaymentList[params.id])) {
+      if (hasValue(this.detailInvoiceList[params.id]) && hasValue(this.detailPaymentList[params.id]) && this.detailPrepaymentList[params.id]) {
         let url = '/updateState'
         updateUrl(this.moduleDetailName, data, url).then(res => {
           if (res.data.success) {
@@ -1963,7 +2003,7 @@ export default {
     }
   },
   created () {
-    this.selectProject(null)
+    this.selectProject()
     this.getEmployee()
   },
   mounted () {
@@ -2010,7 +2050,7 @@ export default {
     margin-right: 2px;
     float: left;
     width: 20px;
-    height: 85px;
+    height: 20px;
     font-weight: 600;
     border-radius: 7px;
   }

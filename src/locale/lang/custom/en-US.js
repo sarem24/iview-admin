@@ -146,6 +146,7 @@ export default {
   invoiceOut: 'Sale invoice',
   moneyOut: 'Purchase money',
   moneyIn: 'Sale money',
+  prepayment: 'Prepayment',
   statusDescription: 'Status description',
   score: 'Score',
   tag: 'Tag',
@@ -157,5 +158,6 @@ export default {
   cashier: 'Business',
   change_password: 'Change password',
   promptRecord: 'Prompt record',
+  NetProfitMarginOnSales: 'Net profit margin on sales',
   end: 'End'
 }
