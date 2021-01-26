@@ -1422,7 +1422,7 @@ export default {
           // 优惠价替换合计小计
           totalSubtotal = params.preferentialPrice
           // 税前利润替换
-          totalPreTaxProfit = calc.sub(params.preferentialPrice, totalCostTaxSubtotal)
+          totalPreTaxProfit = calc.sub(totalPreTaxSubtotal, totalCostTaxSubtotal)
           tempData.push(preferential)
         }
 
