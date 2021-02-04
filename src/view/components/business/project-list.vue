@@ -654,21 +654,22 @@ export default {
                       this.handleUploadFile(params)
                     }
                   } }, this.$t('voucher1'))
-              ])
-              // h('Button', {
-              //   props: {
-              //     type: 'error',
-              //     size: 'small'
-              //   },
-              //   on: {
-              //     click: () => {
-              //       this.remove(params.index)
-              //     }
-              //   }
-              // }, this.$t('delete'))
+              ]),
+              h('Button', {
+                props: {
+                  type: 'error',
+                  size: 'small',
+                  disabled: !this.viewCashier && !this.viewBoss
+                },
+                on: {
+                  click: () => {
+                    this.handleRemoveProject(params.row)
+                  }
+                }
+              }, this.$t('delete'))
             ]
             if (!this.moduleType) {
-              // buttons.splice(1, 1)
+              buttons.splice(2, 1)
             }
             return h('div', buttons)
           }
@@ -1516,6 +1517,25 @@ export default {
       this.uploadData.id = params.row.id
       this.selectProjectFileById()
       this.selectProjectRemarkByProject(this.remarkByProject)
+    },
+    handleRemoveProject (param) {
+      let data = {
+        id: param.id
+      }
+      this.$Modal.confirm({
+        title: this.$t('remind'),
+        content: this.$t('areYouSureWantToDeleteIt'),
+        onOk: () => {
+          this.innerLoadingProject = true
+          del('execute_project', data).then(res => {
+            if (res.data.success) {
+              this.selectProject()
+            } else {
+              this.$Message.error(res.data.message)
+            }
+          })
+        }
+      })
     },
     handleShowDetailUpdate (params) {
       let obj = {}
